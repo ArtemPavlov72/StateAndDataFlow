@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  StateAndDataFlow
 //
-//  Created by Alexey Efimov on 01.11.2021.
+//  Created by Artem Pavlov on 03.11.2021.
 //
 
 import SwiftUI

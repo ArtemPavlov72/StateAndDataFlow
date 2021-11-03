@@ -2,7 +2,7 @@
 //  StarterView.swift
 //  StateAndDataFlow
 //
-//  Created by Alexey Efimov on 01.11.2021.
+//  Created by Artem Pavlov on 03.11.2021.
 // для сохранения в юзер дефолтс использовать appStorage
 
 //представление, которое определяет стартовый экран приложения
@@ -13,6 +13,7 @@ struct StarterView: View {
     @EnvironmentObject private var user: UserManager
     @AppStorage("name") var userNameStorage = ""
     
+    //если использовать данную функцию, то приложение виснет
     private func nameFromStorage() -> Bool {
         if userNameStorage != "" {
             user.name = userNameStorage
