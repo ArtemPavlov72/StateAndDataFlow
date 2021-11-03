@@ -12,21 +12,20 @@ struct StarterView: View {
     //@EnvironmentObject - объект окружения
     @EnvironmentObject private var user: UserManager
     @AppStorage("name") var userNameStorage = ""
+    @AppStorage("isRegistered") var registrationStorage = false
     
-    //если использовать данную функцию, то приложение виснет
     private func nameFromStorage() -> Bool {
-        if userNameStorage != "" {
+        if registrationStorage {
             user.name = userNameStorage
-            user.isRegistered = true
         }
-        return user.isRegistered
+        return registrationStorage
     }
     
     var body: some View {
         //позволяет сгруппировать логику свойств и вернуть во view
         Group {
             //если пользователь зарегистрирован, отображаем ContentView()
-            if user.isRegistered {
+            if nameFromStorage() {
                 ContentView()
                 //если пользователь не зарегистрирован, отображаем RegisterView()
             } else {

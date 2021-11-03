@@ -13,10 +13,12 @@ struct ContentView: View {
     //для отображение пользователя на этой view добавляем свойство userManager
     @EnvironmentObject private var userManager: UserManager
     @AppStorage("name") var userNameStorage = ""
+    @AppStorage("isRegistered") var registrationStorage = false
     
     private func logOutButtonPressed() {
         userNameStorage = ""
         userManager.isRegistered.toggle()
+        registrationStorage = false
     }
     
     var body: some View {

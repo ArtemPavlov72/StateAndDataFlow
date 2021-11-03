@@ -14,6 +14,7 @@ struct RegisterView: View {
     //Если нам нужны данные пользователя в структуреRegisterView, мы обращаемся в этой структуре к этим данным через @EnvironmentObject
     @EnvironmentObject private var user: UserManager
     @AppStorage("name") var userNameStorage = ""
+    @AppStorage("isRegistered") var registrationStorage = false
     
     var body: some View {
         VStack {
@@ -28,31 +29,32 @@ struct RegisterView: View {
                     Text("\(userName.count)")
                         .foregroundColor(.green)
                 }
-        }
-        //Кнопка с картинкой
-        Button(action: registerUser) {
-            HStack {
-                if userName.count < 3 { //УБРАТЬ В МЕТОД!!!
-                    Image(systemName: "checkmark.circle").opacity(0.5)
-                    Text("OK").opacity(0.5)
-                } else {
-                    Image(systemName: "checkmark.circle")
-                    Text("OK")
+            }
+            //Кнопка с картинкой
+            Button(action: registerUser) {
+                HStack {
+                    if userName.count < 3 { //УБРАТЬ В МЕТОД!!!
+                        Image(systemName: "checkmark.circle").opacity(0.5)
+                        Text("OK").opacity(0.5)
+                    } else {
+                        Image(systemName: "checkmark.circle")
+                        Text("OK")
+                    }
                 }
             }
         }
-    }
         .padding()
-}
-
-//метод регистрации пользователя
-private func registerUser() {
-    if !userName.isEmpty && userName.count > 2 { //если поле пользователя не пустое
-        user.name = userName //передаем данные пользователя в свойство name экземпляра user
-        user.isRegistered.toggle() //меняем свойство регистрации на противоположное
-        userNameStorage = userName
     }
-}
+    
+    //метод регистрации пользователя
+    private func registerUser() {
+        if !userName.isEmpty && userName.count > 2 { //если поле пользователя не пустое
+            user.name = userName //передаем данные пользователя в свойство name экземпляра user
+            user.isRegistered.toggle() //меняем свойство регистрации на противоположное
+            userNameStorage = userName
+            registrationStorage = true
+        }
+    }
 }
 
 struct RegisterView_Previews: PreviewProvider {
