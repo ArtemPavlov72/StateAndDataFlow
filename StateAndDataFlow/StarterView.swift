@@ -9,25 +9,13 @@
 import SwiftUI
 
 struct StarterView: View {
-    //@EnvironmentObject - объект окружения
-    @EnvironmentObject private var user: UserManager
-    @AppStorage("name") var userNameStorage = ""
-    @AppStorage("isRegistered") var registrationStorage = false
     
-    private func nameFromStorage() -> Bool {
-        if registrationStorage {
-            user.name = userNameStorage
-        }
-        return registrationStorage
-    }
+    @EnvironmentObject private var userManager: UserManager
     
     var body: some View {
-        //позволяет сгруппировать логику свойств и вернуть во view
         Group {
-            //если пользователь зарегистрирован, отображаем ContentView()
-            if nameFromStorage() {
-                ContentView()
-                //если пользователь не зарегистрирован, отображаем RegisterView()
+            if userManager.user.isRegistered {
+                TimerView()
             } else {
                 RegisterView()
             }
@@ -38,7 +26,6 @@ struct StarterView: View {
 struct StarterView_Previews: PreviewProvider {
     static var previews: some View {
         StarterView()
-        //для возможности отображения вызываем модификатор .environmentObject
             .environmentObject(UserManager())
     }
 }

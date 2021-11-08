@@ -8,32 +8,34 @@
 import SwiftUI
 
 struct ContentView: View {
-    //добавляем @StateObject - для того, чтобы экземпляр класса мог получать обновленные данные класса-издателя, получаем изменения родительского класса в реальном времени
-    @StateObject private var timer = TimeCounter() //экземпляр класса таймер
-    //для отображение пользователя на этой view добавляем свойство userManager
+    
+    @StateObject private var timer = TimeCounter()
     @EnvironmentObject private var userManager: UserManager
-    @AppStorage("name") var userNameStorage = ""
-    @AppStorage("isRegistered") var registrationStorage = false
-    
-    private func logOutButtonPressed() {
-        userNameStorage = ""
-        userManager.isRegistered.toggle()
-        registrationStorage = false
-    }
-    
+            
     var body: some View {
         VStack {
-            Text("Hi, \(userManager.name)") //отображаем имя пользователя
+            Text("Hi, \(userManager.user.name)")
                 .font(.largeTitle)
-                .padding(.top, 100)
-            Text("\(timer.counter)") //отображаем значение таймера
+                .offset(x: 0, y: 100)
+            Text("\(timer.counter)")
                 .font(.largeTitle)
-                .padding(.top, 200)
+                .offset(x: 0, y: 200)
+            
             Spacer()
-            ButtonView(timer: timer)
-            Spacer()
-            LogOutButtonView {
-                logOutButtonPressed()
+            
+            VStack {
+                Spacer()
+                
+                ButtonView(title: timer.buttonTitle, color: .red) {
+                    timer.startTimer() //передаем значения в первую кнопку
+                }
+                
+                Spacer()
+
+                //вторая кнопка:
+                ButtonView(title: "LogOut", color: .blue) {
+                    DataManager.shared.clear(userManager: userManager)
+                }
             }
         }
     }
@@ -46,24 +48,3 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-//кнопка
-struct ButtonView: View {
-    //  @ObservedObject - это как @binding, только для свойств @StateObject
-    @ObservedObject var timer: TimeCounter //создаем экземпляр класса таймер
-    
-    var body: some View {
-        Button(action: { timer.startTimer() }) {
-            Text(timer.buttonTitle) //меняем название кнопки
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-        }
-        .frame(width: 200, height: 60)
-        .background(Color.red)
-        .cornerRadius(20)
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.black, lineWidth: 4)
-        )
-    }
-}

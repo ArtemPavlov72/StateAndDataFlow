@@ -9,53 +9,55 @@ import SwiftUI
 
 struct RegisterView: View {
     
-    @State private var userName = ""
-    //@EnvironmentObject - как @ObservedObject, или как @Binding. Только @EnvironmentObject создает источник данных, доступный из любого представления проекта. Можно передавать не по цепочке, а через представление, или через несколько представлений. Обращаемся к данным из того места, где они нам понадобятся.
-    //Если нам нужны данные пользователя в структуреRegisterView, мы обращаемся в этой структуре к этим данным через @EnvironmentObject
     @EnvironmentObject private var user: UserManager
-    @AppStorage("name") var userNameStorage = ""
-    @AppStorage("isRegistered") var registrationStorage = false
     
     var body: some View {
         VStack {
-            //текстовое поле, где будем вводить имя пользователя
-            HStack {
-                TextField("Enter your name...", text: $userName) //передаем значение userName
-                    .multilineTextAlignment(.center)// отображаем по центру
-                if userName.count < 3 { //УБРАТЬ В МЕТОД!!!
-                    Text("\(userName.count)")
-                        .foregroundColor(.red)
-                } else {
-                    Text("\(userName.count)")
-                        .foregroundColor(.green)
-                }
-            }
-            //Кнопка с картинкой
+            UserNameTF(
+                name: $userManager.user.name,
+                nameIsValid: userManager.nameIsValid
+            )
             Button(action: registerUser) {
                 HStack {
-                    if userName.count < 3 { //УБРАТЬ В МЕТОД!!!
-                        Image(systemName: "checkmark.circle").opacity(0.5)
-                        Text("OK").opacity(0.5)
-                    } else {
-                        Image(systemName: "checkmark.circle")
-                        Text("OK")
-                    }
+                    Image(systemName: "checkmark.circle")
+                    Text("OK")
                 }
             }
+            .disabled(!userManager.nameIsValid) //выключение кнопки в зависимости от валидности имени (nameIsValid)
         }
         .padding()
     }
-    
+}
     //метод регистрации пользователя
-    private func registerUser() {
-        if !userName.isEmpty && userName.count > 2 { //если поле пользователя не пустое
-            user.name = userName //передаем данные пользователя в свойство name экземпляра user
-            user.isRegistered.toggle() //меняем свойство регистрации на противоположное
-            userNameStorage = userName
-            registrationStorage = true
+    extension RegisterView {
+        func registerUser() {
+            if !userManager.user.name.isEmpty { //если значение userManager пустое
+                userManager.user.isRegistered.toggle() //то мы меняем значение свойства isRegistered на противоположное
+                DataManager.shared.saveUser(user: userManager.user)//вызываем метод сохранения пользователя
+            }
         }
     }
-}
+
+    struct UserNameTF: View {
+        
+        @Binding var name: String
+        var nameIsValid = false
+        
+        var body: some View {
+            ZStack {
+                TextField("Type your name...", text: $name)
+                    .multilineTextAlignment(.center)
+                HStack {
+                    Spacer()
+                    Text("\(name.count)")
+                        .font(.callout)
+                        .foregroundColor(nameIsValid ? .green : .red) //в зависимости от значения nameIsValid, счетчик красится в зеленый или красный
+                        .padding([.top, .trailing])
+                }
+                .padding(.bottom)
+            }
+        }
+    }
 
 struct RegisterView_Previews: PreviewProvider {
     static var previews: some View {
